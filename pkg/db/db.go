@@ -43,6 +43,13 @@ func Init(dbFile string) error {
 	return nil
 }
 
+func Close() error {
+	if db != nil {
+		return db.Close()
+	}
+	return nil
+}
+
 func GetDB() *sqlx.DB {
 	return db
 }

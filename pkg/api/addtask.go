@@ -21,11 +21,11 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	afterNow := func(date, now time.Time) bool {
-		return date.Format("20060102") > now.Format("20060102")
+		return date.Format(DateFormat) > now.Format(DateFormat)
 	}
 
 	now := time.Now()
-	today := now.Format("20060102")
+	today := now.Format(DateFormat)
 
 	if task.Date == "" {
 		task.Date = today
@@ -34,14 +34,14 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 	var t time.Time
 	var err error
 	if task.Date != today {
-		t, err = time.Parse("20060102", task.Date)
+		t, err = time.Parse(DateFormat, task.Date)
 		if err != nil {
 			writeError(w, "Неверный формат даты")
 			return
 		}
 	} else {
 		task.Date = today
-		t, _ = time.Parse("20060102", today)
+		t, _ = time.Parse(DateFormat, today)
 	}
 
 	var next string

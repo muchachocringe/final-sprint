@@ -18,6 +18,7 @@ func main() {
 	if err := db.Init(dbFile); err != nil {
 		log.Fatal("Ошибка инициализации БД:", err)
 	}
+	defer db.Close()
 
 	port := 7540
 	if envPort := os.Getenv("TODO_PORT"); envPort != "" {

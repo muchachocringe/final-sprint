@@ -34,3 +34,5 @@
 `go test -run ^TestTasks$ ./tests` - получение списка задач
 `go test -run ^TestEditTask$ ./tests` - тест редактирования задач
 `go test ./tests` - тест общего функционала
+
+Вынес константу для api в отдельный пакет `consts`

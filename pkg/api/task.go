@@ -57,12 +57,12 @@ func updateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if task.Date != "" {
-		if _, err := time.Parse("20060102", task.Date); err != nil {
+		if _, err := time.Parse(DateFormat, task.Date); err != nil {
 			writeError(w, "Неверный формат даты")
 			return
 		}
 
-		now := time.Now().Format("20060102")
+		now := time.Now().Format(DateFormat)
 		if task.Date < now {
 			writeError(w, "Дата не может быть в прошлом")
 			return
@@ -71,7 +71,7 @@ func updateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	if task.Repeat != "" {
 		now := time.Now()
-		testDate := now.Format("20060102")
+		testDate := now.Format(DateFormat)
 		if task.Date != "" {
 			testDate = task.Date
 		}

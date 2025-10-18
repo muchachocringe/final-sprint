@@ -21,7 +21,9 @@ func Init() {
 
 func writeJSON(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	json.NewEncoder(w).Encode(data)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
+	}
 }
 
 func writeError(w http.ResponseWriter, message string) {
