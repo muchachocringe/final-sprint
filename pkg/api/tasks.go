@@ -15,7 +15,7 @@ type TasksResponse struct {
 func tasksHandler(w http.ResponseWriter, r *http.Request) {
 	tasks, err := db.Tasks(defaultTaskLimit)
 	if err != nil {
-		writeError(w, "Ошибка получения задач")
+		writeError(w, "Ошибка получения задач", http.StatusInternalServerError)
 		return
 	}
 

@@ -26,13 +26,13 @@ func taskHandler(w http.ResponseWriter, r *http.Request) {
 func getTaskHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {
-		writeError(w, "Не указан идентификатор")
+		writeError(w, "Не указан идентификатор", http.StatusBadRequest)
 		return
 	}
 
 	task, err := db.GetTask(id)
 	if err != nil {
-		writeError(w, "Задача не найдена")
+		writeError(w, "Задача не найдена", http.StatusNotFound)
 		return
 	}
 
@@ -42,29 +42,29 @@ func getTaskHandler(w http.ResponseWriter, r *http.Request) {
 func updateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	var task db.Task
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
-		writeError(w, "Ошибка декодирования JSON")
+		writeError(w, "Ошибка декодирования JSON", http.StatusBadRequest)
 		return
 	}
 
 	if task.ID == "" {
-		writeError(w, "Не указан идентификатор задачи")
+		writeError(w, "Не указан идентификатор задачи", http.StatusBadRequest)
 		return
 	}
 
 	if task.Title == "" {
-		writeError(w, "Не указан заголовок задачи")
+		writeError(w, "Не указан заголовок задачи", http.StatusBadRequest)
 		return
 	}
 
 	if task.Date != "" {
 		if _, err := time.Parse(DateFormat, task.Date); err != nil {
-			writeError(w, "Неверный формат даты")
+			writeError(w, "Неверный формат даты", http.StatusBadRequest)
 			return
 		}
 
 		now := time.Now().Format(DateFormat)
 		if task.Date < now {
-			writeError(w, "Дата не может быть в прошлом")
+			writeError(w, "Дата не может быть в прошлом", http.StatusBadRequest)
 			return
 		}
 	}
@@ -76,13 +76,13 @@ func updateTaskHandler(w http.ResponseWriter, r *http.Request) {
 			testDate = task.Date
 		}
 		if _, err := NextDate(now, testDate, task.Repeat); err != nil {
-			writeError(w, err.Error())
+			writeError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 	}
 
 	if err := db.UpdateTask(&task); err != nil {
-		writeError(w, "Ошибка обновления задачи")
+		writeError(w, "Ошибка обновления задачи", http.StatusNotFound)
 		return
 	}
 
@@ -92,18 +92,18 @@ func updateTaskHandler(w http.ResponseWriter, r *http.Request) {
 func deleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {
-		writeError(w, "Не указан идентификатор")
+		writeError(w, "Не указан идентификатор", http.StatusBadRequest)
 		return
 	}
 
 	_, err := db.GetTask(id)
 	if err != nil {
-		writeError(w, "Задача не найдена")
+		writeError(w, "Задача не найдена", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeleteTask(id); err != nil {
-		writeError(w, "Ошибка удаления задачи")
+		writeError(w, "Ошибка удаления задачи", http.StatusNotFound)
 		return
 	}
 
